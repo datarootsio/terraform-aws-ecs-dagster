@@ -10,7 +10,8 @@ resource "aws_ecs_cluster" "airflow" {
 resource "aws_ecs_task_definition" "dagster" {
   family                   = "dagster-cluster"
   requires_compatibilities = ["FARGATE"]
-
+  cpu                      = 1024
+  memory                   = 2048
   volume {
     name = "dagster"
   }
