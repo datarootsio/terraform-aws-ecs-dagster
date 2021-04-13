@@ -1,4 +1,3 @@
-
 resource "aws_ecs_cluster" "dagster" {
   name               = "dagster-cluster"
   capacity_providers = ["FARGATE_SPOT", "FARGATE"]
