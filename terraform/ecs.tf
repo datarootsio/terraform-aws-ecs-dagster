@@ -12,6 +12,7 @@ resource "aws_ecs_task_definition" "dagster" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = 1024
   memory                   = 2048
+  network_mode             = "awsvpc"
   volume {
     name = "dagster"
   }
