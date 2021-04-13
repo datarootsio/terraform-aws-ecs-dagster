@@ -2,34 +2,13 @@ name: Paolo-Terraform
 
 on:
   push:
-    branches: [t_paolo]
+    branches: [main]
 
   # Allows to run the workflows manually
   workflow_dispatch:
 
 jobs:
-  docker:
-    env:
-     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-     AWS_DEFAULT_REGION: eu-west-1
-    name: "Docker"
-    runs-on: ubuntu-latest
-    steps:
-     - name: "Checkout"
-       uses: actions/checkout@master
-     - name: "Login"
-       run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 432226246114.dkr.ecr.eu-west-1.amazonaws.com
-     - name: "Docker build"
-       run: docker build -t my-beautiful-ecr-paolo:latest .
-       working-directory: ./app_image
-     - name: "Docker tag"
-       run: docker tag my-beautiful-ecr-paolo:latest 432226246114.dkr.ecr.eu-west-1.amazonaws.com/my-beautiful-ecr-paolo:latest
-     - name: "Docker push"
-       run: docker push 432226246114.dkr.ecr.eu-west-1.amazonaws.com/my-beautiful-ecr-paolo:latest
-       working-directory: ./app_image
   terraform:
-    needs: [docker]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
