@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "dagster" {
             "sh",
             "-c"
         ],
-        "essential": false,
+        "essential": true,
         "mountPoints": [
           {
             "sourceVolume": "dagster",
