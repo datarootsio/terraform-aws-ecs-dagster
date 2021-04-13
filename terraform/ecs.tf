@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "airflow" {
 }
 
 resource "aws_ecs_task_definition" "dagster" {
-  family = "dagster-cluster"
+  family                   = "dagster-cluster"
   requires_compatibilities = ["FARGATE"]
 
   volume {

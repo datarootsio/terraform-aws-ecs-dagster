@@ -5,12 +5,12 @@ variable "s3-bucket" {
 }
 
 variable "file_path" {
-  type = string
+  type    = string
   default = "s3://dagster-first-bucket/"
 }
 
 variable "dagster-container-home" {
-  type = string
+  type    = string
   default = "/opt/dagster/app"
 }
 
