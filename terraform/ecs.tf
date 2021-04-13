@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "image": "mikesir87/aws-cli",
         "name": "sidecar_container",
         "command": [
-            "/bin/bash -c \"aws s3 cp ${var.file_path} ${var.dagster-container-home} --recursive\""
+            "/bin/bash -c \"aws s3 mv ${var.file_path} ${var.dagster-container-home} --recursive\""
         ],
         "entryPoint": [
             "sh",
