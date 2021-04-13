@@ -1,4 +1,9 @@
-resource "aws_ecs_cluster" "airflow" {
+resource "aws_cloudwatch_log_group" "dagster" {
+  name              = "dagster"
+  retention_in_days = 1
+}
+
+resource "aws_ecs_cluster" "dagster" {
   name               = "dagster-cluster"
   capacity_providers = ["FARGATE_SPOT", "FARGATE"]
 
@@ -29,6 +34,14 @@ resource "aws_ecs_task_definition" "dagster" {
             "sh",
             "-c"
         ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+              "awslogs-group": "${aws_cloudwatch_log_group.dagster.name}",
+              "awslogs-region": "eu-west-1",
+              "awslogs-stream-prefix": "airflow"
+          }
+        },
         "essential": true,
         "mountPoints": [
           {
