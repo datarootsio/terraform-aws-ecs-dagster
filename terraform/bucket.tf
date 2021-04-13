@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "b" {
-  bucket = "sander-first-bucket"
+  bucket = "dagster-first-bucket"
   acl    = "private"
 
   versioning {
