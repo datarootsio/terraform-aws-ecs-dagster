@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "b" {
-  bucket = "dagster-first-bucket"
+  bucket = "dagster-first-buckett"
   acl    = "public-read-write"
 
   versioning {
