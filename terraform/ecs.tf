@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "dagster" {
             "awslogs-region": "${var.aws_region}",
             "awslogs-stream-prefix": "dagster"
           }
-        }
+        },
         "essential": true,
         "mountPoints": [
           {
