@@ -40,3 +40,24 @@ resource "aws_ecs_task_definition" "dagster" {
     ]
   TASK_DEFINITION
 }
+
+resource "aws_ecs_service" "airflow" {
+
+  name            = "dagster"
+  cluster         = aws_ecs_cluster.dagster.id
+  task_definition = aws_ecs_task_definition.dagster.id
+  desired_count   = 1
+
+  health_check_grace_period_seconds = 120
+
+  network_configuration {
+    subnets = [] //local.rds_ecs_subnet_ids
+    //security_groups  = [aws_security_group.airflow.id]
+    assign_public_ip = true //length(var.private_subnet_ids) == 0 ? true : false
+  }
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 100
+  }
+}
