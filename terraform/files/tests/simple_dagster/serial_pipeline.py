@@ -1,7 +1,8 @@
 import csv
 import os
 
-from dagster import pipeline, solid
+from dagster import pipeline, solid, repository
+
 
 @solid
 def load_cereals(_):
@@ -42,3 +43,8 @@ def complex_pipeline():
         most_calories=sort_by_calories(cereals),
         most_protein=sort_by_protein(cereals),
     )
+
+
+@repository
+def hello_cereal_repository():
+    return [complex_pipeline]
