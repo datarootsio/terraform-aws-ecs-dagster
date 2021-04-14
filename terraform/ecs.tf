@@ -35,6 +35,14 @@ resource "aws_ecs_task_definition" "dagster" {
             "sh",
             "-c"
         ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "${aws_cloudwatch_log_group.dagster.name}",
+            "awslogs-region": "${var.aws_region}",
+            "awslogs-stream-prefix": "dagster"
+          }
+        }
         "essential": true,
         "mountPoints": [
           {

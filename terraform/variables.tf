@@ -28,3 +28,9 @@ variable "resource_suffix" {
   description = "The suffix of the resource to be created"
 }
 
+variable "aws_region" {
+  type        = string
+  default     = "eu-west-1"
+  description = "The region of the aws account"
+}
+
