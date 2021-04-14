@@ -51,7 +51,7 @@ resource "aws_ecs_service" "dagster" {
   // health_check_grace_period_seconds = 120
 
   network_configuration {
-    subnets = [] //local.rds_ecs_subnet_ids
+    subnets = ["subnet-456789", "subnet-098765"] //local.rds_ecs_subnet_ids
     //security_groups  = [aws_security_group.airflow.id]
     assign_public_ip = true //length(var.private_subnet_ids) == 0 ? true : false
   }
