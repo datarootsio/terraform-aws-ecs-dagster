@@ -2,7 +2,7 @@ name: Paolo-Terraform
 
 on:
   push:
-    branches: [master]
+    branches: [master, init_container]
 
   # Allows to run the workflows manually
   workflow_dispatch:
