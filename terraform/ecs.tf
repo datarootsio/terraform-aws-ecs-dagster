@@ -41,14 +41,14 @@ resource "aws_ecs_task_definition" "dagster" {
   TASK_DEFINITION
 }
 
-resource "aws_ecs_service" "airflow" {
+resource "aws_ecs_service" "dagster" {
 
   name            = "dagster"
   cluster         = aws_ecs_cluster.dagster.id
   task_definition = aws_ecs_task_definition.dagster.id
   desired_count   = 1
 
-  health_check_grace_period_seconds = 120
+  // health_check_grace_period_seconds = 120
 
   network_configuration {
     subnets = [] //local.rds_ecs_subnet_ids
