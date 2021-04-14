@@ -1,5 +1,5 @@
 // Change the name of the bucket -> 1 t too much
-variable "s3-bucket" {
+variable "bucket_name" {
   type        = string
   description = "A first dagster bucket"
   default     = "dagster-first-buckett"
@@ -14,5 +14,17 @@ variable "file_path" {
 variable "dagster-container-home" {
   type    = string
   default = "/opt/dagster/app"
+}
+
+variable "resource_prefix" {
+  type        = string
+  default     = ""
+  description = "The prefix of the resource to be created"
+}
+
+variable "resource_suffix" {
+  type        = string
+  default     = ""
+  description = "The suffix of the resource to be created"
 }
 
