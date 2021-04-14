@@ -13,6 +13,7 @@ resource "aws_ecs_task_definition" "dagster" {
   cpu                      = 1024
   memory                   = 2048
   network_mode             = "awsvpc"
+
   volume {
     name = "dagster"
   }
@@ -23,7 +24,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "image": "mikesir87/aws-cli",
         "name": "sidecar_container",
         "command": [
-            "/bin/bash -c \"aws s3 mv ${var.file_path} ${var.dagster-container-home} --recursive\""
+            "/bin/bash -c \"aws s3 mv s3://dagster-first-buckett/hello_world.txt ${var.dagster-container-home}\""
         ],
         "entryPoint": [
             "sh",
