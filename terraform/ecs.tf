@@ -18,6 +18,7 @@ resource "aws_ecs_task_definition" "dagster" {
   cpu                      = 1024
   memory                   = 2048
   network_mode             = "awsvpc"
+  task_role_arn            = aws_iam_role.task.arn
   execution_role_arn       = aws_iam_role.execution.arn
 
   volume {
