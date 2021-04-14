@@ -56,11 +56,11 @@ resource "aws_ecs_task_definition" "dagster" {
 }
 
 resource "aws_ecs_service" "dagster" {
-
-  name            = "dagster"
-  cluster         = aws_ecs_cluster.dagster.id
-  task_definition = aws_ecs_task_definition.dagster.id
-  desired_count   = 1
+  name               = "dagster"
+  cluster            = aws_ecs_cluster.dagster.id
+  task_definition    = aws_ecs_task_definition.dagster.id
+  desired_count      = 1
+  execution_role_arn = aws_iam_role.execution.arn
 
   // health_check_grace_period_seconds = 120
 
