@@ -5,20 +5,41 @@ run_storage:
     postgres_url:
       env: PG_DB_CONN_STRING
 
-#event_log_storage:
-#  module: dagster_postgres.event_log
-#  class: PostgresEventLogStorage
-#  config:
-#    postgres_db:
-#      username:
-#        env: DAGSTER_PG_USERNAME
-#        password:
-#          env: DAGSTER_PG_PASSWORD
-#        hostname:
-#          env: DAGSTER_PG_HOST
-#        db_name:
-#          env: DAGSTER_PG_DB
-#        port: 5432
+event_log_storage:
+  module: dagster_postgres.event_log
+  class: PostgresEventLogStorage
+  config:
+    postgres_url:
+      env: PG_DB_CONN_STRING
+
+scheduler:
+  module: dagster.core.scheduler
+  class: DagsterDaemonScheduler
+
+schedule_storage:
+  module: dagster_postgres.schedule_storage
+  class: PostgresScheduleStorage
+  config:
+    postgres_url:
+      env: PG_DB_CONN_STRING
+
+run_launcher:
+  module: dagster.core.launcher
+  class: DefaultRunLauncher
+
+# Custom values via env
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+  config:
+    max_concurrent_runs: 25
+    tag_concurrency_limits:
+      - key: "database"
+        value: "redshift"
+        limit: 4
+      - key: "dagster/backfill"
+        limit: 10
+
 
 telemetry:
   enabled: false

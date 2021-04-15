@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "dagster" {
             }
         ],
         "command": [
-            "/bin/bash -c \"dagit -h 0.0.0.0 -p 8080 -w ${var.dagster-container-home}/${var.workspace_file}\""
+            "/bin/bash -c \"echo 'hello there' && dagit -h 0.0.0.0 -p 8080 -w ${var.dagster-container-home}/${var.workspace_file}\""
         ],
         "entryPoint": [
             "sh",
@@ -95,6 +95,40 @@ resource "aws_ecs_task_definition" "dagster" {
                 "containerPort": 8080,
                 "hostPort": 8080
             }
+        ]
+      },
+      {
+        "image": "dagster/k8s-dagit-example",
+        "name": "${var.resource_prefix}-dagster-daemon-${var.resource_suffix}",
+        "dependsOn": [
+            {
+                "containerName": "sidecar_container",
+                "condition": "SUCCESS"
+            }
+        ],
+        "command": [
+            "/bin/bash -c \"dagster-daemon run\""
+        ],
+        "entryPoint": [
+            "sh",
+            "-c"],
+        "environment": [
+          ${join(",\n", formatlist("{\"name\":\"%s\",\"value\":\"%s\"}", keys(local.dagster_variables), values(local.dagster_variables)))}
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "${aws_cloudwatch_log_group.dagster.name}",
+            "awslogs-region": "${var.aws_region}",
+            "awslogs-stream-prefix": "dagster"
+          }
+        },
+        "essential": true,
+        "mountPoints": [
+          {
+            "sourceVolume": "dagster",
+            "containerPath": "${var.dagster-container-home}"
+          }
         ]
       }
     ]

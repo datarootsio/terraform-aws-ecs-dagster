@@ -1,3 +1,4 @@
+# Add s3 bucket path
 load_from:
   - python_file:
       relative_path: serial_pipeline.py
