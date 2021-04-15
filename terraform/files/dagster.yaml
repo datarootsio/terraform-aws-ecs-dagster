@@ -1,0 +1,24 @@
+run_storage:
+  module: dagster_postgres.run_storage
+  class: PostgresRunStorage
+  config:
+    postgres_url:
+      env: PG_DB_CONN_STRING
+
+#event_log_storage:
+#  module: dagster_postgres.event_log
+#  class: PostgresEventLogStorage
+#  config:
+#    postgres_db:
+#      username:
+#        env: DAGSTER_PG_USERNAME
+#        password:
+#          env: DAGSTER_PG_PASSWORD
+#        hostname:
+#          env: DAGSTER_PG_HOST
+#        db_name:
+#          env: DAGSTER_PG_DB
+#        port: 5432
+
+telemetry:
+  enabled: false

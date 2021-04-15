@@ -21,6 +21,20 @@ resource "aws_s3_bucket_object" "workspace" {
 
 }
 
+// Upload dagster yaml
+resource "aws_s3_bucket_object" "dagster" {
+  bucket = aws_s3_bucket.b.id
+
+  key = var.dagster_file
+
+  acl = "private" # or can be "public-read"
+
+  source = "files/${var.dagster_file}"
+
+  etag = filemd5("files/${var.dagster_file}")
+
+}
+
 resource "aws_s3_bucket_object" "repo" {
   bucket = aws_s3_bucket.b.id
 

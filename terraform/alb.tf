@@ -20,6 +20,14 @@ resource "aws_security_group" "dagster" {
   name        = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   description = "Security group to connect to the dagster instance"
 
+  //  ingress {
+  //    description = "Allow all traffic in"
+  //    from_port   = 0
+  //    to_port     = 0
+  //    protocol    = "-1"
+  //    cidr_blocks = ["0.0.0.0/0"]
+  //  }
+
   egress {
     description = "Allow all traffic out"
     from_port   = 0
@@ -37,8 +45,8 @@ resource "aws_lb" "dagster" {
   name               = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   internal           = false
   load_balancer_type = "application"
-  // security_groups    = [aws_security_group.alb.id, aws_security_group.airflow.id]
-  subnets = var.public_subnet
+  security_groups    = [aws_security_group.alb.id, aws_security_group.dagster.id]
+  subnets            = var.public_subnet
 
   enable_deletion_protection = false
 

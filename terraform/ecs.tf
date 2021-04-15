@@ -72,6 +72,9 @@ resource "aws_ecs_task_definition" "dagster" {
         "entryPoint": [
             "sh",
             "-c"],
+        "environment": [
+          ${join(",\n", formatlist("{\"name\":\"%s\",\"value\":\"%s\"}", keys(local.dagster_variables), values(local.dagster_variables)))}
+        ],
         "logConfiguration": {
           "logDriver": "awslogs",
           "options": {
@@ -101,6 +104,8 @@ resource "aws_ecs_task_definition" "dagster" {
 }
 
 resource "aws_ecs_service" "dagster" {
+  depends_on = [aws_lb.dagster, aws_db_instance.dagster]
+
   name            = "dagster"
   cluster         = aws_ecs_cluster.dagster.id
   task_definition = aws_ecs_task_definition.dagster.id
@@ -109,7 +114,7 @@ resource "aws_ecs_service" "dagster" {
   // health_check_grace_period_seconds = 120
 
   network_configuration {
-    subnets = ["subnet-08da686d46e99872d"] //local.rds_ecs_subnet_ids
+    subnets          = ["subnet-08da686d46e99872d"] //local.rds_ecs_subnet_ids
     security_groups  = [aws_security_group.dagster.id]
     assign_public_ip = true //length(var.private_subnet_ids) == 0 ? true : false
   }

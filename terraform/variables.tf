@@ -39,6 +39,12 @@ variable "workspace_file" {
   description = "The config file needed to run dagit."
 }
 
+variable "dagster_file" {
+  type        = string
+  default     = "dagster.yaml"
+  description = "The config file needed to use database and daemon with dagit."
+}
+
 variable "repository" {
   type        = string
   default     = ""
@@ -61,4 +67,34 @@ variable "vpc" {
   type        = string
   default     = "vpc-0eafa6867cb3bdaa3"
   description = "The id of the virtual private cloud."
+}
+
+variable "rds_instance_class" {
+  type        = string
+  default     = "db.t2.micro"
+  description = "The type of instance class for the RDS."
+}
+
+variable "rds_username" {
+  type        = string
+  default     = "psuser"
+  description = "The username to access the RDS instance."
+}
+
+variable "rds_password" {
+  type        = string
+  default     = "Test123456"
+  description = "The password to access the RDS instance."
+}
+
+variable "aws_availability_zone" {
+  type        = string
+  default     = "eu-west-1a"
+  description = "The availability zone of the resource."
+}
+
+variable "rds_deletion_protection" {
+  type        = bool
+  default     = false
+  description = ""
 }
