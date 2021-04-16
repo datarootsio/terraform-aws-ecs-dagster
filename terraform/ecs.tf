@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "dagster" {
             }
         ],
         "command": [
-            "/bin/bash -c \"echo 'hello there' && dagit -h 0.0.0.0 -p 8080 -w ${var.dagster-container-home}/${var.workspace_file}\""
+            "/bin/bash -c \"echo 'hello l' && dagit -h 0.0.0.0 -p 8080 -w ${var.dagster-container-home}/${var.workspace_file}\""
         ],
         "entryPoint": [
             "sh",
@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "dagster" {
             }
         ],
         "command": [
-            "/bin/bash -c \"dagster-daemon run\""
+            "/bin/bash -c \"pip install awscli && dagster-daemon run\""
         ],
         "entryPoint": [
             "sh",

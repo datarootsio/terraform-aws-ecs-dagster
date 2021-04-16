@@ -1,84 +1,58 @@
 # start_scheduler_marker_0
 import csv
-from datetime import datetime, time
+import os
 
-from dagster import daily_schedule, pipeline, repository, solid
-from dagster.utils import file_relative_path
+from dagster import pipeline, repository, solid, ScheduleDefinition
 
 
 @solid
-def hello_cereal(context, date):
-    dataset_path = file_relative_path(__file__, "cereal.csv")
-    context.log.info(dataset_path)
+def load_sander(_):
+    dataset_path = os.path.join(os.path.dirname(__file__), "cereal.csv")
     with open(dataset_path, "r") as fd:
         cereals = [row for row in csv.DictReader(fd)]
+    return cereals
 
-    context.log.info(
-        "Today is {date}. Found {n_cereals} cereals".format(
-            date=date, n_cereals=len(cereals)
-        )
+
+@solid
+def sort_by_calories(_, cereals):
+    sorted_cereals = list(
+        sorted(cereals, key=lambda cereal: cereal["calories"])
     )
+    most_calories = sorted_cereals[-1]["name"]
+    return most_calories
+
+
+@solid
+def sort_by_protein(_, cereals):
+    sorted_cereals = list(
+        sorted(cereals, key=lambda cereal: cereal["protein"])
+    )
+    most_protein = sorted_cereals[-1]["name"]
+    return most_protein
+
+
+@solid
+def display_results(context, most_calories, most_protein):
+    context.log.info(f"Most caloric cereal: {most_calories}")
+    context.log.info(f"Most protein-rich cereal: {most_protein}")
 
 
 @pipeline
-def hello_cereal_pipeline():
-    hello_cereal()
+def complex_pipeline():
+    cereals = load_sander()
+    display_results(
+        most_calories=sort_by_calories(cereals),
+        most_protein=sort_by_protein(cereals),
+    )
 
 
-# end_scheduler_marker_0
-
-# start_scheduler_marker_1
-@daily_schedule(
-    pipeline_name="hello_cereal_pipeline",
-    start_date=datetime(2020, 6, 1),
-    execution_time=time(6, 45),
-    execution_timezone="US/Central",
-)
-def good_morning_schedule(date):
-    return {
-        "solids": {
-            "hello_cereal": {
-                "inputs": {"date": {"value": date.strftime("%Y-%m-%d")}}
-            }
-        }
-    }
+good_morning_schedule = ScheduleDefinition(
+        "good_morning_schedule",
+        "* * * * *",
+        "complex_pipeline",
+    )
 
 
-# end_scheduler_marker_1
-
-# start_scheduler_marker_2
 @repository
 def hello_cereal_repository():
-    return [hello_cereal_pipeline, good_morning_schedule]
-
-
-# end_scheduler_marker_2
-
-# start_scheduler_marker_3
-def weekday_filter(_context):
-    weekno = datetime.today().weekday()
-    # Returns true if current day is a weekday
-    return weekno < 5
-
-
-# end_scheduler_marker_3
-
-# start_scheduler_marker_4
-@daily_schedule(
-    pipeline_name="hello_cereal_pipeline",
-    start_date=datetime(2021, 4, 15),
-    execution_time=time(17, 7),
-    execution_timezone="US/Central",
-    should_execute=weekday_filter,
-)
-def good_weekday_morning_schedule(date):
-    return {
-        "solids": {
-            "hello_cereal": {
-                "inputs": {"date": {"value": date.strftime("%Y-%m-%d")}}
-            }
-        }
-    }
-
-
-# end_scheduler_marker_4
+    return [complex_pipeline, good_morning_schedule]

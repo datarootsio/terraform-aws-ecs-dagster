@@ -45,6 +45,12 @@ variable "dagster_file" {
   description = "The config file needed to use database and daemon with dagit."
 }
 
+variable "sync_script_file" {
+  type        = string
+  default     = "sync_script.sh"
+  description = "Script used to sync pipelines to Dagster."
+}
+
 variable "repository" {
   type        = string
   default     = ""
