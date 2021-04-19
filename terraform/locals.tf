@@ -5,4 +5,6 @@ locals {
     S3_BUCKET_NAME : local.dagster_container_home
   }
   dagster_container_home = "s3://${var.dagster_config_bucket}"
+
+  rcs_subnet = length(var.private_subnet) == 0 ? var.public_subnet : var.private_subnet
 }

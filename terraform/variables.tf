@@ -57,16 +57,21 @@ variable "repository" {
   description = "where the repos are."
 }
 
-variable "private_subnet" {
-  type        = string
-  default     = ""
-  description = "The private subnet."
-}
-
 variable "public_subnet" {
   type        = list(string)
   default     = ["subnet-08da686d46e99872d", "subnet-0e5bb83f963f8df0f"]
-  description = "The public subnet."
+  description = "The public subnet where the load balancer should reside. Moreover, the ecs and rds will use these if no private subnets are defined. At least two should be provided."
+
+  validation {
+    condition = length(var.public_subnet) >= 2
+    error_message = "There should be at least 2 public subnet id."
+  }
+}
+
+variable "private_subnet" {
+  type        = list(string)
+  default     = ""
+  description = "The private subnet."
 }
 
 variable "vpc" {

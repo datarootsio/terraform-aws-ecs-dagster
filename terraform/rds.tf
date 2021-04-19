@@ -4,7 +4,7 @@ resource "aws_db_instance" "dagster" {
   allocated_storage   = 20
   storage_type        = "standard"
   engine              = "postgres"
-  engine_version      = "11.8"
+  engine_version      = "11.10"
   instance_class      = var.rds_instance_class
   username            = var.rds_username
   password            = var.rds_password
@@ -24,8 +24,8 @@ resource "aws_db_instance" "dagster" {
 resource "aws_db_subnet_group" "dagster" {
   count = 1
   name  = "${var.resource_prefix}-dagster-${var.resource_suffix}"
-  // should be private
-  subnet_ids = var.public_subnet
+
+  subnet_ids = local.rcs_subnet
 
   tags = var.tags
 }
