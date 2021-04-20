@@ -25,7 +25,7 @@ resource "aws_db_subnet_group" "dagster" {
   count = 1
   name  = "${var.resource_prefix}-dagster-${var.resource_suffix}"
 
-  subnet_ids = local.rcs_subnet
+  subnet_ids = local.ecs_rds_subnet
 
   tags = var.tags
 }

@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_log_group" "dagster" {
   name              = "dagster"
-  retention_in_days = 1
+  retention_in_days = var.log_retention
 
   tags = var.tags
 }
@@ -19,21 +19,21 @@ resource "aws_ecs_cluster" "dagster" {
 resource "aws_ecs_task_definition" "dagster" {
   family                   = "dagster-cluster"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = var.ecs_cpu
+  memory                   = var.ecs_memory
   network_mode             = "awsvpc"
   task_role_arn            = aws_iam_role.task.arn
   execution_role_arn       = aws_iam_role.execution.arn
 
   volume {
-    name = "dagster"
+    name = local.dagster_mounted_volume_name
   }
 
   container_definitions = <<TASK_DEFINITION
       [
       {
         "image": "mikesir87/aws-cli",
-        "name": "sidecar_container",
+        "name": "${local.sidecar_container_name}",
         "command": [
             "/bin/bash -c \"aws s3 cp s3://${var.dagster_config_bucket}/ ${var.dagster-container-home} --recursive\""
         ],
@@ -52,17 +52,17 @@ resource "aws_ecs_task_definition" "dagster" {
         "essential": false,
         "mountPoints": [
           {
-            "sourceVolume": "dagster",
+            "sourceVolume": "${local.dagster_mounted_volume_name}",
             "containerPath": "${var.dagster-container-home}"
           }
         ]
       },
       {
         "image": "dagster/k8s-dagit-example",
-        "name": "${var.resource_prefix}-dagster-webserver-${var.resource_suffix}",
+        "name": "${local.dagit_container_name}",
         "dependsOn": [
             {
-                "containerName": "sidecar_container",
+                "containerName": "${local.sidecar_container_name}",
                 "condition": "SUCCESS"
             }
         ],
@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "essential": true,
         "mountPoints": [
           {
-            "sourceVolume": "dagster",
+            "sourceVolume": "${local.dagster_mounted_volume_name}",
             "containerPath": "${var.dagster-container-home}"
           }
         ],
@@ -99,10 +99,10 @@ resource "aws_ecs_task_definition" "dagster" {
       },
       {
         "image": "dagster/k8s-dagit-example",
-        "name": "${var.resource_prefix}-dagster-daemon-${var.resource_suffix}",
+        "name": "${local.dagster_daemon_container_name}",
         "dependsOn": [
             {
-                "containerName": "sidecar_container",
+                "containerName": "${local.sidecar_container_name}",
                 "condition": "SUCCESS"
             }
         ],
@@ -126,7 +126,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "essential": true,
         "mountPoints": [
           {
-            "sourceVolume": "dagster",
+            "sourceVolume": "${local.dagster_mounted_volume_name}",
             "containerPath": "${var.dagster-container-home}"
           }
         ]
@@ -145,12 +145,12 @@ resource "aws_ecs_service" "dagster" {
   task_definition = aws_ecs_task_definition.dagster.id
   desired_count   = 1
 
-  // health_check_grace_period_seconds = 120
+  health_check_grace_period_seconds = 120
 
   network_configuration {
-    subnets          = ["subnet-08da686d46e99872d"] //local.rds_ecs_subnet_ids
+    subnets          = local.ecs_rds_subnet
     security_groups  = [aws_security_group.dagster.id]
-    assign_public_ip = true //length(var.private_subnet_ids) == 0 ? true : false
+    assign_public_ip = length(var.private_subnet) == 0 ? true : false
   }
 
   capacity_provider_strategy {
@@ -159,7 +159,7 @@ resource "aws_ecs_service" "dagster" {
   }
 
   load_balancer {
-    container_name   = "${var.resource_prefix}-dagster-webserver-${var.resource_suffix}"
+    container_name   = local.dagit_container_name
     container_port   = 8080
     target_group_arn = aws_lb_target_group.dagster.arn
   }

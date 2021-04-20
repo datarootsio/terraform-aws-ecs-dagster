@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "b" {
+resource "aws_s3_bucket" "repository_bucket" {
   bucket = var.dagster_config_bucket
   acl    = "private"
 
@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "b" {
 
 # Upload an object
 resource "aws_s3_bucket_object" "workspace" {
-  bucket = aws_s3_bucket.b.id
+  bucket = aws_s3_bucket.repository_bucket.id
 
   key = var.workspace_file
 
@@ -23,7 +23,7 @@ resource "aws_s3_bucket_object" "workspace" {
 
 // Upload dagster yaml
 resource "aws_s3_bucket_object" "dagster" {
-  bucket = aws_s3_bucket.b.id
+  bucket = aws_s3_bucket.repository_bucket.id
 
   key = var.dagster_file
 
@@ -37,7 +37,7 @@ resource "aws_s3_bucket_object" "dagster" {
 
 // Upload dagster yaml
 resource "aws_s3_bucket_object" "sync_script" {
-  bucket = aws_s3_bucket.b.id
+  bucket = aws_s3_bucket.repository_bucket.id
 
   key = var.sync_script_file
 
@@ -50,7 +50,7 @@ resource "aws_s3_bucket_object" "sync_script" {
 }
 
 resource "aws_s3_bucket_object" "repo" {
-  bucket = aws_s3_bucket.b.id
+  bucket = aws_s3_bucket.repository_bucket.id
 
   for_each = fileset("files/tests/simple_dagster/", "*")
 
