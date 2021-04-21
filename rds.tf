@@ -10,7 +10,7 @@ resource "aws_db_instance" "dagster" {
   password            = var.rds_password
   multi_az            = false
   availability_zone   = var.aws_availability_zone
-  publicly_accessible = true
+  publicly_accessible = false
   deletion_protection = var.rds_deletion_protection
   skip_final_snapshot = true //var.rds_skip_final_snapshot
   //final_snapshot_identifier = "${var.resource_prefix}-airflow-${var.resource_suffix}-${local.timestamp_sanitized}"
