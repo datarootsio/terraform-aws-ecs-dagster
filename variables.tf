@@ -28,20 +28,20 @@ variable "dagster_file" {
 }
 
 variable "ecs_cpu" {
-  type = number
-  default = 1024
+  type        = number
+  default     = 1024
   description = "The amount of cpu to give to the ECS instance."
 }
 
 variable "ecs_memory" {
-  type = number
-  default = 2048
+  type        = number
+  default     = 2048
   description = "The amount of ecs memory to give to the ECS instance."
 }
 
 variable "log_retention" {
-  type = number
-  default = 7
+  type        = number
+  default     = 7
   description = "The number of days that the logs shoud live."
 }
 
@@ -58,11 +58,11 @@ variable "private_subnet" {
 
 variable "public_subnet" {
   type        = list(string)
-  default     = ["subnet-08da686d46e99872d", "subnet-0e5bb83f963f8df0f"]
+  default     = []
   description = "The public subnet where the load balancer should reside. Moreover, the ecs and rds will use these if no private subnets are defined. At least two should be provided."
 
   validation {
-    condition = length(var.public_subnet) >= 2
+    condition     = length(var.public_subnet) >= 2
     error_message = "There should be at least 2 public subnet id."
   }
 }
@@ -81,13 +81,13 @@ variable "rds_instance_class" {
 
 variable "rds_password" {
   type        = string
-  default     = "Test123456"
+  default     = ""
   description = "The password to access the RDS instance."
 }
 
 variable "rds_username" {
   type        = string
-  default     = "psuser"
+  default     = ""
   description = "The username to access the RDS instance."
 }
 
@@ -103,18 +103,6 @@ variable "resource_suffix" {
   description = "The suffix of the resource to be created"
 }
 
-variable "repository" {
-  type        = string
-  default     = ""
-  description = "where the repos are."
-}
-
-variable "sync_script_file" {
-  type        = string
-  default     = "sync_script.sh"
-  description = "Script used to sync pipelines to Dagster."
-}
-
 variable "tags" {
   type        = map(string)
   default     = { Name = "Terraform-aws-dagster" }
@@ -123,7 +111,7 @@ variable "tags" {
 
 variable "vpc" {
   type        = string
-  default     = "vpc-0eafa6867cb3bdaa3"
+  default     = ""
   description = "The id of the virtual private cloud."
 }
 

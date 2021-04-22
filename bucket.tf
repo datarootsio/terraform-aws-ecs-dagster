@@ -35,20 +35,6 @@ resource "aws_s3_bucket_object" "dagster" {
 
 }
 
-// Upload dagster yaml
-resource "aws_s3_bucket_object" "sync_script" {
-  bucket = aws_s3_bucket.repository_bucket.id
-
-  key = var.sync_script_file
-
-  acl = "private" # or can be "public-read"
-
-  source = "files/${var.sync_script_file}"
-
-  etag = filemd5("files/${var.sync_script_file}")
-
-}
-
 resource "aws_s3_bucket_object" "repo" {
   bucket = aws_s3_bucket.repository_bucket.id
 
