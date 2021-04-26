@@ -1,4 +1,4 @@
-output "airflow_alb_dns" {
+output "dagster_alb_dns" {
   description = "The DNS name of the ALB, with this you can access the Airflow webserver"
   value       = aws_lb.dagster.dns_name
 }
@@ -9,12 +9,12 @@ output "airflow_alb_dns" {
 //  value       = local.dns_record
 //}
 
-output "airflow_task_iam_role" {
+output "dagster_task_iam_role" {
   description = "The IAM role of the airflow task, use this to give Airflow more permissions"
   value       = aws_iam_role.task
 }
 
-output "airflow_connection_sg" {
+output "dagster_connection_sg" {
   description = "The security group with which you can connect other instance to Airflow, for example EMR Livy"
   value       = aws_security_group.dagster
 }

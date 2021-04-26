@@ -15,6 +15,17 @@ resource "aws_security_group" "alb" {
   tags = var.tags
 }
 
+resource "aws_security_group_rule" "alb_outside_http" {
+  for_each          = local.inbound_ports
+  security_group_id = aws_security_group.alb.id
+  type              = "ingress"
+  protocol          = "TCP"
+  from_port         = each.value
+  to_port           = each.value
+  cidr_blocks       = var.ip_allow_list
+}
+
+
 resource "aws_security_group" "dagster" {
   vpc_id      = var.vpc
   name        = "${var.resource_prefix}-dagster-${var.resource_suffix}"
@@ -30,6 +41,15 @@ resource "aws_security_group" "dagster" {
 
   tags = var.tags
 
+}
+
+resource "aws_security_group_rule" "dagster_connection" {
+  security_group_id        = aws_security_group.dagster.id
+  type                     = "ingress"
+  protocol                 = "-1"
+  from_port                = 0
+  to_port                  = 0
+  source_security_group_id = aws_security_group.dagster.id
 }
 
 // ALB
@@ -58,6 +78,7 @@ resource "aws_lb_listener" "dagster" {
 }
 
 resource "aws_lb_listener" "dagster_http_redirect" {
+  // Change this once we have https
   count             = 0
   load_balancer_arn = aws_lb.dagster.arn
   port              = "80"

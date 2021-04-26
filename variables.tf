@@ -39,6 +39,12 @@ variable "ecs_memory" {
   description = "The amount of ecs memory to give to the ECS instance."
 }
 
+variable "ip_allow_list" {
+  type        = list(string)
+  description = "A list of ip ranges that are allowed to access the airflow webserver, default: full access"
+  default     = ["0.0.0.0/0"]
+}
+
 variable "log_retention" {
   type        = number
   default     = 7
@@ -113,6 +119,12 @@ variable "tags" {
   type        = map(string)
   default     = { Name = "Terraform-aws-dagster" }
   description = "Tags to add to the created resources."
+}
+
+variable "use_https" {
+  type        = bool
+  description = "Expose traffic using HTTPS or not"
+  default     = false
 }
 
 variable "vpc" {

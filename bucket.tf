@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "repository_bucket" {
 resource "aws_s3_bucket_object" "workspace" {
   bucket = aws_s3_bucket.repository_bucket.id
 
-  key = var.workspace_file
+  key = "config/${var.workspace_file}"
 
   acl = "private"
 
@@ -25,7 +25,7 @@ resource "aws_s3_bucket_object" "workspace" {
 resource "aws_s3_bucket_object" "dagster" {
   bucket = aws_s3_bucket.repository_bucket.id
 
-  key = var.dagster_file
+  key = "config/${var.dagster_file}"
 
   acl = "private" # or can be "public-read"
 
@@ -40,7 +40,7 @@ resource "aws_s3_bucket_object" "repo" {
 
   for_each = fileset("files/tests/simple_dagster/", "*")
 
-  key = each.value
+  key = "pipelines/${each.value}"
 
   acl = "private" # or can be "public-read"
 

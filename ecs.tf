@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "image": "mikesir87/aws-cli",
         "name": "${local.sidecar_container_name}",
         "command": [
-            "/bin/bash -c \"aws s3 cp s3://${var.dagster_config_bucket}/ ${var.dagster-container-home} --recursive\""
+            "/bin/bash -c \"aws s3 cp s3://${var.dagster_config_bucket}/config/ ${var.dagster-container-home} --recursive && aws s3 cp s3://${var.dagster_config_bucket}/pipelines/ ${var.dagster-container-home} --recursive\""
         ],
         "entryPoint": [
             "sh",
