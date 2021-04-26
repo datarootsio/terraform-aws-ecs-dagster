@@ -10,6 +10,12 @@ variable "aws_region" {
   description = "The region of the aws account"
 }
 
+variable "certificate_arn" {
+  type        = string
+  default     = ""
+  description = "The arn of the certificate that will be used."
+}
+
 variable "dagster_config_bucket" {
   type        = string
   description = "Dagster bucket containing the config files."
@@ -25,6 +31,12 @@ variable "dagster_file" {
   type        = string
   default     = "dagster.yaml"
   description = "The config file needed to use database and daemon with dagit."
+}
+
+variable "dns_name" {
+  type        = string
+  default     = ""
+  description = "The dns name that will be used to expose Dagster. It will be auto generated if not provided."
 }
 
 variable "ecs_cpu" {
@@ -73,6 +85,12 @@ variable "public_subnet" {
   }
 }
 
+variable "route53_zone_name" {
+  type        = string
+  default     = ""
+  description = "The name of the route53 zone that will be used for the certificate validation."
+}
+
 variable "rds_deletion_protection" {
   type        = bool
   default     = false
@@ -110,8 +128,8 @@ variable "resource_suffix" {
 }
 
 variable "rds_skip_final_snapshot" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether or not to skip the final snapshot before deleting (mainly for tests)"
 }
 

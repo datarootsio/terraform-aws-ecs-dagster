@@ -67,9 +67,9 @@ resource "aws_lb" "dagster" {
 
 resource "aws_lb_listener" "dagster" {
   load_balancer_arn = aws_lb.dagster.arn
-  port              = "80"
-  protocol          = "HTTP"
-  certificate_arn   = ""
+  port              = var.use_https ? "443" : "80"
+  protocol          = var.use_https ? "HTTPS" : "HTTP"
+  certificate_arn   = var.use_https ? local.certificate_arn : ""
 
   default_action {
     type             = "forward"
