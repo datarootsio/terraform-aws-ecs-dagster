@@ -1,4 +1,4 @@
-module example.com/m/v2
+module github.com/datarootsio/terraform-aws-ecs-dagster/test
 
 go 1.16
 
