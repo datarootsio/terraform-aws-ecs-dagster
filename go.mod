@@ -1,4 +1,4 @@
-module github.com/datarootsio/terraform-aws-ecs-dagster/test
+module github.com/datarootsio/terraform-aws-ecs-dagster
 
 go 1.16
 
