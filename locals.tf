@@ -21,4 +21,6 @@ locals {
   dns_record = var.dns_name != "" ? var.dns_name : (var.route53_zone_name != "" ? "${var.resource_prefix}-dagster-${var.resource_suffix}.${data.aws_route53_zone.zone[0].name}" : "")
 
   certificate_arn = var.use_https ? (var.certificate_arn != "" ? var.certificate_arn : aws_acm_certificate.cert[0].arn) : ""
+
+  dagster_init_files = "./dagster_init_files"
 }

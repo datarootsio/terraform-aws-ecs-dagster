@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "repository_bucket" {
   }
 }
 
-# Upload an object
+# Upload workspace config file
 resource "aws_s3_bucket_object" "workspace" {
   bucket = aws_s3_bucket.repository_bucket.id
 
@@ -15,13 +15,13 @@ resource "aws_s3_bucket_object" "workspace" {
 
   acl = "private"
 
-  source = "files/${var.workspace_file}"
+  source = "${local.dagster_init_files}/${var.workspace_file}"
 
-  etag = filemd5("files/${var.workspace_file}")
+  etag = filemd5("${local.dagster_init_files}/${var.workspace_file}")
 
 }
 
-// Upload dagster yaml
+// Upload dagster config file
 resource "aws_s3_bucket_object" "dagster" {
   bucket = aws_s3_bucket.repository_bucket.id
 
@@ -29,23 +29,22 @@ resource "aws_s3_bucket_object" "dagster" {
 
   acl = "private" # or can be "public-read"
 
-  source = "files/${var.dagster_file}"
+  source = "${local.dagster_init_files}/${var.dagster_file}"
 
-  etag = filemd5("files/${var.dagster_file}")
+  etag = filemd5("${local.dagster_init_files}/${var.dagster_file}")
 
 }
 
+// Upload the syncing pipeline
 resource "aws_s3_bucket_object" "repo" {
   bucket = aws_s3_bucket.repository_bucket.id
 
-  for_each = fileset("files/tests/simple_dagster/", "*")
-
-  key = "pipelines/${each.value}"
+  key = "pipelines/syncing_pipeline.py"
 
   acl = "private" # or can be "public-read"
 
-  source = "files/tests/simple_dagster/${each.value}"
+  source = "${local.dagster_init_files}/syncing_pipeline.py"
 
-  etag = filemd5("files/tests/simple_dagster/${each.value}")
+  etag = filemd5("${local.dagster_init_files}/syncing_pipeline.py")
 
 }

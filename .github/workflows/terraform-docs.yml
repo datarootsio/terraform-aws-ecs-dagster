@@ -2,7 +2,7 @@ name: "docs"
 on:
   push:
     branches:
-      - dagster_daemon
+      - main
 jobs:
   docs:
     name: "Docs"
