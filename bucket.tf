@@ -13,7 +13,7 @@ resource "aws_s3_bucket_object" "workspace" {
 
   key = var.workspace_file
 
-  acl = "private" # or can be "public-read"
+  acl = "private"
 
   source = "files/${var.workspace_file}"
 

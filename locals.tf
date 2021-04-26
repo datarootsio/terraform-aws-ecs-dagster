@@ -11,4 +11,6 @@ locals {
   sidecar_container_name        = "sidecar_container"
   dagit_container_name          = "dagit"
   dagster_daemon_container_name = "dagster_daemon"
+  timestamp           = timestamp()
+  timestamp_sanitized = replace(local.timestamp, "/[- TZ:]/", "")
 }

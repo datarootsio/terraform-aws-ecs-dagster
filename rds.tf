@@ -12,8 +12,8 @@ resource "aws_db_instance" "dagster" {
   availability_zone   = var.aws_availability_zone
   publicly_accessible = false
   deletion_protection = var.rds_deletion_protection
-  skip_final_snapshot = true //var.rds_skip_final_snapshot
-  //final_snapshot_identifier = "${var.resource_prefix}-airflow-${var.resource_suffix}-${local.timestamp_sanitized}"
+  skip_final_snapshot = var.rds_skip_final_snapshot
+  final_snapshot_identifier = "${var.resource_prefix}-dagster-${var.resource_suffix}-${local.timestamp_sanitized}"
   identifier             = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   vpc_security_group_ids = [aws_security_group.dagster.id]
   db_subnet_group_name   = aws_db_subnet_group.dagster[0].name

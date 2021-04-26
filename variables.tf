@@ -103,6 +103,12 @@ variable "resource_suffix" {
   description = "The suffix of the resource to be created"
 }
 
+variable "rds_skip_final_snapshot" {
+  type = bool
+  default = true
+  description = "Whether or not to skip the final snapshot before deleting (mainly for tests)"
+}
+
 variable "tags" {
   type        = map(string)
   default     = { Name = "Terraform-aws-dagster" }
