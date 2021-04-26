@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "dagster" {
-  name              = "dagster"
+  name              = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   retention_in_days = var.log_retention
 
   tags = var.tags
