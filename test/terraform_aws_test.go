@@ -3,6 +3,10 @@ package test
 import (
 	"testing"
 	"fmt"
+	"net/http"
+
+	"github.com/PuerkitoBio/goquery"
+
 	"time"
 	"strings"
 	"github.com/aws/aws-sdk-go/service/ecs"
@@ -38,8 +42,8 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 	retrySleepTime := time.Duration(10) * time.Second
 	ecsGetTaskArnMaxRetries := 20
 	ecsGetTaskStatusMaxRetries := 50
-	//httpStatusCodeMaxRetries := 15
-	//amountOfConsecutiveGetsToBeHealthy := 3
+	httpStatusCodeMaxRetries := 20
+	amountOfConsecutiveGetsToBeHealthy := 3
 	desiredStatusRunning := "RUNNING"
 	clusterName := AddPreAndSuffix("dagster", resourcePrefix, resourceSuffix)
 	serviceName := AddPreAndSuffix("dagster", resourcePrefix, resourceSuffix)
@@ -75,7 +79,7 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 	ecsClient := aws.NewEcsClient(t, region)
 
 	// Get all the arns of the task that are running.
-	// There should only be one task running, the airflow task
+	// There should only be one task running, the dagster task
 	fmt.Println("Getting task arns")
 	listRunningTasksInput := &ecs.ListTasksInput{
 		Cluster:       &clusterName,
@@ -118,8 +122,8 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 			fmt.Printf("Getting container statuses, try... %d\n", i)
 
 			describeTasks, _ := ecsClient.DescribeTasks(describeTasksInput)
-			airflowTask := describeTasks.Tasks[0]
-			containers := airflowTask.Containers
+			dagsterTask := describeTasks.Tasks[0]
+			containers := dagsterTask.Containers
 
 			webserverContainer = *GetContainerWithName(webserverContainerName, containers)
 			schedulerContainer = *GetContainerWithName(schedulerContainerName, containers)
@@ -136,6 +140,59 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 		assert.Equal(t, "RUNNING", *schedulerContainer.LastStatus)
 		assert.Equal(t, "STOPPED", *sidecarContainer.LastStatus)
 		fmt.Println("Containers are running correctly")
+
+		fmt.Println("Doing HTTP request/checking health")
+
+		protocol := "https"
+		dagsterAlbDNS := terraform.Output(t, options, "dagster_dns_record")
+
+		if options.Vars["use_https"] == false {
+			protocol = "http"
+		}
+
+		if options.Vars["route53_zone_name"] == "" {
+			dagsterAlbDNS = terraform.Output(t, options, "dagster_alb_dns")
+		}
+
+		fmt.Printf("%s\n", dagsterAlbDNS)
+
+		dagsterURL := fmt.Sprintf("%s://%s", protocol, dagsterAlbDNS)
+
+		fmt.Printf("Trying to reach %s...\n", dagsterURL)
+
+		var amountOfConsecutiveHealthyChecks int
+		var res *http.Response
+		for i := 0; i < httpStatusCodeMaxRetries; i++ {
+			fmt.Printf("Doing HTTP request to dagster webservice, try... %d\n", i)
+			res, err = http.Get(dagsterURL)
+			if res != nil && err == nil {
+				fmt.Println(res.StatusCode)
+				if res.StatusCode >= 200 && res.StatusCode < 400 {
+					amountOfConsecutiveHealthyChecks++
+					fmt.Println("Webservice is healthy")
+				} else {
+					amountOfConsecutiveHealthyChecks = 0
+					fmt.Println("Webservice is NOT healthy")
+				}
+
+				if amountOfConsecutiveHealthyChecks == amountOfConsecutiveGetsToBeHealthy {
+					break
+				}
+			}
+			time.Sleep(retrySleepTime)
+		}
+
+		if res != nil {
+			assert.Equal(t, true, res.StatusCode >= 200 && res.StatusCode < 400)
+			assert.Equal(t, amountOfConsecutiveGetsToBeHealthy, amountOfConsecutiveHealthyChecks)
+
+			if res.StatusCode >= 200 && res.StatusCode < 400 {
+				fmt.Println("Getting the actual HTML code")
+				defer res.Body.Close()
+				_, err := goquery.NewDocumentFromReader(res.Body)
+				assert.NoError(t, err)
+			}
+		}
 	}
 }
 
@@ -161,12 +218,14 @@ func getDefaultTerraformOptions(t *testing.T, resourcePrefix string, resourceSuf
     terraformOptions.Vars["rds_username"] = "dataroots"
     terraformOptions.Vars["rds_password"] = "dataroots"
     terraformOptions.Vars["rds_instance_class"] = "db.t2.micro"
+    terraformOptions.Vars["use_https"] = false
+    terraformOptions.Vars["route53_zone_name"] = ""
 
 	return terraformOptions, nil
 }
 
 
-func TestTerraformHelloWorldExample(t *testing.T) {
+func TestTerraformDagsterModule(t *testing.T) {
 
     resourcePrefix := "dtr"
     resourceSuffix :=  strings.ToLower(random.UniqueId())

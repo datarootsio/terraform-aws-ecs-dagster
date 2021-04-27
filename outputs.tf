@@ -1,20 +1,19 @@
 output "dagster_alb_dns" {
-  description = "The DNS name of the ALB, with this you can access the Airflow webserver"
+  description = "The DNS name of the ALB, with this you can access the dagster webserver"
   value       = aws_lb.dagster.dns_name
 }
 
-// To add once HTTPS is done
-//output "airflow_dns_record" {
-//  description = "The created DNS record (only if \"use_https\" = true)"
-//  value       = local.dns_record
-//}
+output "dagster_dns_record" {
+  description = "The created DNS record (only if \"use_https\" = true)"
+  value       = local.dns_record
+}
 
 output "dagster_task_iam_role" {
-  description = "The IAM role of the airflow task, use this to give Airflow more permissions"
+  description = "The IAM role of the dagster task, use this to give dagster more permissions"
   value       = aws_iam_role.task
 }
 
 output "dagster_connection_sg" {
-  description = "The security group with which you can connect other instance to Airflow, for example EMR Livy"
+  description = "The security group with which you can connect other instance to dagster, for example EMR Livy"
   value       = aws_security_group.dagster
 }
