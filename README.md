@@ -43,7 +43,7 @@ module "dagster" {
 
 ## Adding new pipeline
 To add new pipelines to Dagster: 
-- you need to add the new pipeline file name and its path in the mounted volume of the ECS instance
+- you need to add in the ```workspace.yml``` file the new pipeline file name and its path in the mounted volume of the ECS instance,
 
 ```hcl
 
@@ -52,7 +52,9 @@ load_from:
       relative_path: new_pipeline.py
       working_directory: /path/to/mounted/volume
 ```
-- then add the pipeline python file to the created S3 bucket.
+- add the pipeline python file to the created S3 bucket in the pipeline folder,
+- run the syncing pipeline in dagit to pick up the new pipeline and ```workspace.yml``` file.
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
