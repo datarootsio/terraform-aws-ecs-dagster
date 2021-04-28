@@ -2,10 +2,10 @@ name: "tests"
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 jobs:
   validate:
     name: "Validate"
@@ -39,7 +39,7 @@ jobs:
       AWS_DEFAULT_REGION: eu-west-1
     name: "Tests"
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.actor == 'PaoloDataroots' || github.actor == 'Sandervg4')}}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'master' && (github.actor == 'PaoloDataroots' || github.actor == 'Sandervg4')}}
     steps:
       - name: "Checkout"
         uses: actions/checkout@master
