@@ -7,29 +7,6 @@ on:
     branches:
       - master
 jobs:
-  validate:
-    name: "Validate"
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@master
-
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.14
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: tflint
-        run: docker run --rm -v $(pwd):/data -t wata727/tflint
   test:
     env:
       tests_timeout: "2h"
