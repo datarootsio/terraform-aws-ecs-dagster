@@ -197,7 +197,7 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 }
 
 func getDefaultTerraformOptions(t *testing.T, resourcePrefix string, resourceSuffix string) (*terraform.Options, error) {
-	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, "..", ".")
+	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, "..", "./test/test_module")
 
 	terraformOptions := &terraform.Options{
 		TerraformDir:       tempTestFolder,
@@ -205,21 +205,7 @@ func getDefaultTerraformOptions(t *testing.T, resourcePrefix string, resourceSuf
     }
     terraformOptions.Vars["resource_prefix"] = resourcePrefix
     terraformOptions.Vars["resource_suffix"] = resourceSuffix
-    terraformOptions.Vars["aws_availability_zone"] = "eu-west-1a"
-    terraformOptions.Vars["aws_region"] = "eu-west-1"
     terraformOptions.Vars["dagster_config_bucket"] = AddPreAndSuffix("bucket", resourcePrefix, resourceSuffix)
-    terraformOptions.Vars["ecs_cpu"] = 1024
-    terraformOptions.Vars["ecs_memory"] = 2048
-    terraformOptions.Vars["vpc"] = "vpc-0eafa6867cb3bdaa3"
-    terraformOptions.Vars["public_subnet"] = []string{
-    		"subnet-08da686d46e99872d",
-    		"subnet-0e5bb83f963f8df0f",
-    	}
-    terraformOptions.Vars["rds_username"] = "dataroots"
-    terraformOptions.Vars["rds_password"] = "dataroots"
-    terraformOptions.Vars["rds_instance_class"] = "db.t2.micro"
-    terraformOptions.Vars["use_https"] = false
-    terraformOptions.Vars["route53_zone_name"] = ""
 
 	return terraformOptions, nil
 }
