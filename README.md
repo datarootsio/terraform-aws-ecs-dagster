@@ -55,6 +55,12 @@ load_from:
 - add the pipeline python file to the created S3 bucket in the pipeline folder,
 - run the syncing pipeline in dagit to pick up the new pipeline and ```workspace.yml``` file.
 
+## Security
+This module supports HTTPS however RBAC is not supported (yet?) by Dagster. Therefore,
+this module results in Dagit being publicly available. It is important to note that the 
+user should implement and manage authentication themselves, for example by implementing SSO.
+
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
