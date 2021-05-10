@@ -3,16 +3,18 @@ default: lint
 
 tools:
 	go install gotest.tools/gotestsum
-	terraform init
+	terraform init test/test_module
 
 fmt:
 	terraform fmt
+	terraform fmt test/test_module
 	go mod tidy
 	gofmt -w -s test
 
 lint-tf: tools
 	terraform fmt -check
-	terraform validate
+	terraform fmt -check test/test_module
+	terraform validate test/test_module
 	tflint
 
 lint-go:

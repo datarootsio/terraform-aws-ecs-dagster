@@ -1,21 +1,21 @@
 package test
 
 import (
-	"testing"
 	"fmt"
 	"net/http"
+	"testing"
 
 	"github.com/PuerkitoBio/goquery"
 
-	"time"
-	"strings"
 	"github.com/aws/aws-sdk-go/service/ecs"
-    "github.com/aws/aws-sdk-go/service/iam"
-    "github.com/gruntwork-io/terratest/modules/aws"
-    "github.com/gruntwork-io/terratest/modules/random"
-    testStructure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/gruntwork-io/terratest/modules/aws"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	testStructure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
+	"strings"
+	"time"
 )
 
 func AddPreAndSuffix(resourceName string, resourcePrefix string, resourceSuffix string) string {
@@ -36,7 +36,6 @@ func GetContainerWithName(containerName string, containers []*ecs.Container) *ec
 	}
 	return nil
 }
-
 
 func validateCluster(t *testing.T, options *terraform.Options, region string, resourcePrefix string, resourceSuffix string) {
 	retrySleepTime := time.Duration(10) * time.Second
@@ -189,7 +188,7 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 			if res.StatusCode >= 200 && res.StatusCode < 400 {
 				fmt.Println("Getting the actual HTML code")
 				defer res.Body.Close()
-				doc , err := goquery.NewDocumentFromReader(res.Body)
+				doc, err := goquery.NewDocumentFromReader(res.Body)
 				fmt.Println("Getting the the title of the website to confirm there's content there")
 				title := doc.Find("title").Text()
 				fmt.Printf("The title of the website is %s\n", title)
@@ -204,25 +203,24 @@ func getDefaultTerraformOptions(t *testing.T, resourcePrefix string, resourceSuf
 	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, "..", "./test/test_module")
 
 	terraformOptions := &terraform.Options{
-		TerraformDir:       tempTestFolder,
-		Vars:               map[string]interface{}{},
-    }
-    terraformOptions.Vars["resource_prefix"] = resourcePrefix
-    terraformOptions.Vars["resource_suffix"] = resourceSuffix
-    terraformOptions.Vars["dagster_config_bucket"] = AddPreAndSuffix("bucket", resourcePrefix, resourceSuffix)
+		TerraformDir: tempTestFolder,
+		Vars:         map[string]interface{}{},
+	}
+	terraformOptions.Vars["resource_prefix"] = resourcePrefix
+	terraformOptions.Vars["resource_suffix"] = resourceSuffix
+	terraformOptions.Vars["dagster_config_bucket"] = AddPreAndSuffix("bucket", resourcePrefix, resourceSuffix)
 
 	return terraformOptions, nil
 }
 
-
 func TestTerraformDagsterModule(t *testing.T) {
 
-    resourcePrefix := "dtr"
-    resourceSuffix :=  strings.ToLower(random.UniqueId())
-    region := "eu-west-1"
-    options, err := getDefaultTerraformOptions(t, resourcePrefix, resourceSuffix)
+	resourcePrefix := "dtr"
+	resourceSuffix := strings.ToLower(random.UniqueId())
+	region := "eu-west-1"
+	options, err := getDefaultTerraformOptions(t, resourcePrefix, resourceSuffix)
 	assert.NoError(t, err)
-    // terraform destroy => when test completes
+	// terraform destroy => when test completes
 	defer terraform.Destroy(t, options)
 	fmt.Println("Running: terraform init && terraform apply")
 	_, err = terraform.InitE(t, options)
