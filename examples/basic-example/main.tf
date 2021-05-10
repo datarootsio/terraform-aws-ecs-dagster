@@ -17,8 +17,8 @@ module "aws-dagster" {
   public_subnet = ["subnet-12345", "subnet-67890"]
   vpc           = "vpc-123456"
 
-  resource_prefix = "myawesome"
-  resource_suffix = "test"
+  resource_prefix       = "myawesome"
+  resource_suffix       = "test"
   dagster_config_bucket = "myawesome-bucket-test"
 
   use_https = false
