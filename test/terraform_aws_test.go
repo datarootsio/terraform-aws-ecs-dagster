@@ -189,7 +189,11 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 			if res.StatusCode >= 200 && res.StatusCode < 400 {
 				fmt.Println("Getting the actual HTML code")
 				defer res.Body.Close()
-				_, err := goquery.NewDocumentFromReader(res.Body)
+				doc , err := goquery.NewDocumentFromReader(res.Body)
+				fmt.Println("Getting the the title of the website to confirm there's content there")
+				title := doc.Find("title").Text()
+				fmt.Printf("The title of the website is %s\n", title)
+				assert.Equal(t, "Dagit", title)
 				assert.NoError(t, err)
 			}
 		}
