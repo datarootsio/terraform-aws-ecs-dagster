@@ -14,13 +14,9 @@ provider "aws" {
 module "aws-dagster" {
   source = "../.."
 
-  //public_subnet = ["subnet-12345", "subnet-67890"]
-  public_subnet = [
-    "subnet-08da686d46e99872d",
-    "subnet-0e5bb83f963f8df0f"
-  ]
-  //vpc           = "vpc-123456"
-  vpc = "vpc-0eafa6867cb3bdaa3"
+  public_subnet = ["subnet-12345", "subnet-67890"]
+  vpc           = "vpc-123456"
+
   resource_prefix = "myawesome"
   resource_suffix = "test"
   dagster_config_bucket = "myawesome-bucket-test"
