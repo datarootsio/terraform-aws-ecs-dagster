@@ -1,0 +1,11 @@
+# Ignore the .idea folder
+.idea
+
+# Ignore terraform files which should not be used
+.terraform.lock.hcl
+**/.terraform/*
+*.tfvars
+
+# .tfstate files
+*.tfstate
+*.tfstate.*

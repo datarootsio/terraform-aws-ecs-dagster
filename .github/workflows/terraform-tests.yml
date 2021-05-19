@@ -1,0 +1,36 @@
+name: "tests"
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    env:
+      tests_timeout: "2h"
+      golangci_lint_version: "v1.32"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: eu-west-1
+    name: "Tests"
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'master' && (github.actor == 'PaoloDataroots' || github.actor == 'Sandervg4')}}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@master
+
+      - name: "go vet"
+        run: go vet ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: golangci-lint command line arguments.
+          args: --timeout=3m0s
+          version: ${{ env.golangci_lint_version }}
+
+      - name: "go test"
+        run: |
+          go test -v  -timeout ${{ env.tests_timeout }} ./...

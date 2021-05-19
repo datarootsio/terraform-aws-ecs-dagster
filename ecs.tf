@@ -1,12 +1,12 @@
 resource "aws_cloudwatch_log_group" "dagster" {
-  name              = "dagster"
+  name              = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   retention_in_days = var.log_retention
 
   tags = var.tags
 }
 
 resource "aws_ecs_cluster" "dagster" {
-  name               = "dagster-cluster"
+  name               = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   capacity_providers = ["FARGATE_SPOT", "FARGATE"]
 
   default_capacity_provider_strategy {
@@ -17,7 +17,7 @@ resource "aws_ecs_cluster" "dagster" {
 }
 
 resource "aws_ecs_task_definition" "dagster" {
-  family                   = "dagster-cluster"
+  family                   = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.ecs_cpu
   memory                   = var.ecs_memory
@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "dagster" {
         "image": "mikesir87/aws-cli",
         "name": "${local.sidecar_container_name}",
         "command": [
-            "/bin/bash -c \"aws s3 cp s3://${var.dagster_config_bucket}/ ${var.dagster-container-home} --recursive\""
+            "/bin/bash -c \"aws s3 cp s3://${var.dagster_config_bucket}/config/ ${var.dagster-container-home} --recursive && aws s3 cp s3://${var.dagster_config_bucket}/pipelines/ ${var.dagster-container-home} --recursive\""
         ],
         "entryPoint": [
             "sh",
@@ -140,7 +140,7 @@ resource "aws_ecs_task_definition" "dagster" {
 resource "aws_ecs_service" "dagster" {
   depends_on = [aws_lb.dagster, aws_db_instance.dagster]
 
-  name            = "dagster"
+  name            = "${var.resource_prefix}-dagster-${var.resource_suffix}"
   cluster         = aws_ecs_cluster.dagster.id
   task_definition = aws_ecs_task_definition.dagster.id
   desired_count   = 1
