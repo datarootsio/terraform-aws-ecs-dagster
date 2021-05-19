@@ -16,7 +16,7 @@ This is a module for Terraform that deploys Dagster in AWS.
 - A RDS instance (optional but recommended)
 - A DNS Record (optional but recommended)
 
-Average cost of the minimal setup with RDS: ~60$/month
+Average cost of minimal setup with RDS: ~60$/month
 
 ## Intend
 
