@@ -22,5 +22,5 @@ locals {
 
   certificate_arn = var.use_https ? (var.certificate_arn != "" ? var.certificate_arn : aws_acm_certificate.cert[0].arn) : ""
 
-  dagster_init_files = "./templates/dagster_init_files"
+  dagster_init_files = "./templates/dagster-init-files"
 }

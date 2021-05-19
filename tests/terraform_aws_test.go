@@ -200,7 +200,7 @@ func validateCluster(t *testing.T, options *terraform.Options, region string, re
 }
 
 func getDefaultTerraformOptions(t *testing.T, resourcePrefix string, resourceSuffix string) (*terraform.Options, error) {
-	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, "..", "./test/test_module")
+	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, "..", "./tests/test_module")
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: tempTestFolder,
