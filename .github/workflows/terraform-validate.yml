@@ -16,15 +16,15 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./test/test_module
+        working-directory: ./tests/test_module
 
       - name: Terraform Format (module)
         run: terraform fmt -check
-        working-directory: ./test/test_module
+        working-directory: ./tests/test_module
 
       - name: Terraform Format (test)
         run: terraform fmt -check
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: ./test/test_module
+        working-directory: ./tests/test_module
