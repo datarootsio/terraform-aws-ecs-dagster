@@ -1,8 +1,8 @@
-from dagster import solid, pipeline, repository
+from dagster import op, job, repository
 from subprocess import run
 
 
-@solid
+@op
 def s3_bucket(context):
     # Remove hardcoded
     cmd = "python -m awscli s3 sync $S3_BUCKET_NAME/config/ $DAGSTER_HOME"
@@ -13,7 +13,7 @@ def s3_bucket(context):
     context.log.info(f"Syncing pipeline files: {rc}")
 
 
-@pipeline
+@job
 def syncing_pipeline():
     s3_bucket()
 
